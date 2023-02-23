@@ -104,7 +104,7 @@ public class ProductController {
 			productService.save(product);
 		}
 		redirectAttributes.addFlashAttribute("messages", "The product has been saved successfully");
-		return "redirect:/products";
+		return "redirect:/products";//thu github
 	}
 
 }
