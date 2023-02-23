@@ -1,0 +1,65 @@
+<div class="full-details">
+  <table class="table table-bordered table-striped table-hover table-responsive-xl">
+      <thead class="thead-dark">
+          <tr>
+              <th class="hideable-column">
+                  <a class="text-white" th:if="${sortField != 'id'}"
+                      th:href="@{'/brands/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${sortDir}}">
+                      Brand ID
+                  </a>
+                  <a class="text-white" th:if="${sortField != 'id'}"
+                      th:href="@{'/brands/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir}}">
+                      Brand ID
+                  </a>
+                  <span th:if="${sortField == 'id'}"
+                      th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+              </th>
+
+              <th>Logo</th>
+
+              <th>
+                  <a class="text-white" th:if="${sortField != 'name'}"
+                      th:href="@{'/brands/page/' + ${currentPage} + '?sortField=name&sortDir=' + ${sortDir}}">
+                      Brand Name
+                  </a>
+                  <a class="text-white" th:if="${sortField == 'productName'}"
+                      th:href="@{'/brands/page/' + ${currentPage} + '?sortField=name&sortDir=' + ${reverseSortDir}}">
+                      Brand Name
+                  </a>
+                  <span th:if="${sortField == 'name'}"
+                      th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+              </th>
+
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+
+      <tbody>
+          <tr th:each="brand : ${listBrands}">
+              <td class="hideable-column">[[${brand.id}]]</td>
+
+              <td>
+                  <span th:if="${brand.logo == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+                  <img th:if="${brand.logo !=null}" th:src="@{${brand.logoPath}}" style="width: 100px">
+              </td>
+
+              <td>[[${brand.name}]]</td>
+
+              <td>
+                  <th:block th:each="cat:${brand.categories}">
+                      <span class="badge badge-secondary" th:text="${cat.productName}"></span>
+                  </th:block>
+              </td>
+
+              <td>
+                  <div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})"></div>
+                  &nbsp;
+                  <div
+                      th:replace="fragments :: delete('brand', ${brand.id}, '/brands/delete/' + ${brand.id}, true)">
+                  </div>
+              </td>
+          </tr>
+      </tbody>
+  </table>
+</div>

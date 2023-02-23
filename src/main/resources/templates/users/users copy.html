@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0" />
+
+    <title>Users - Shopping Cart Admin</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <!-- https://fontawesome.com/download =>nhấn download Free For Web, copy webfonts, copy css/all.css vào folder fontawesome-->
+    <!-- https://fontawesome.com/search =>search từ khóa pointrait =>chọn <i class="fa-solid fa-image-portrait"></i> -->
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div>
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <a href="" class="navbar-brand" th:href="@{/}"> <img th:src="@{/images/shopping-logo.png}"
+                        width="100px" /> </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="topNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a th:href="@{/users}" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/users/new}" class="dropdown-item">Create New</a>
+                                <a th:href="@{/users}" class="dropdown-item">View All</a>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- Categories menu-->
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a th:href="@{/categories}" class="nav-link dropdown-toggle"
+                                data-toggle="dropdown">Categories</a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/categories/new}" class="dropdown-item">Create New Item</a>
+                                <a th:href="@{/categories}" class="dropdown-item">View All Item</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div>
+            <h2>Manage Users</h2>
+            <a th:href="@{/users/new}" class="fas fa-user-plus fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/excel}" class="fas fa-file-excel fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/pdf}" class="fas fa-file-pdf fa-2x icon-dark mr-2"></a>
+        </div>
+
+        <div th:if="${messages !=null}" class="alert alert-success text-center">
+            [[${messages}]]
+            <!-- bắt thông báo redirectAttributes.addFlashAttribute("messages", "The user has been saved successfully");-->
+        </div>
+
+        <div>
+            <!-- /users/page/1?sortField=firstName&sortDir=asc&keyword=bruce-->
+            <!-- ?sortField=firstName&sortDir=asc&keyword=bruce -> là dạng param , sau dấu ? -->
+            <!-- Các input bên trong form biến thành dạng param cặp keyvalue, param để bắt những tham số sau dấu ?-->
+            <!-- input method dạng get thì sẽ biến nhữn input thành những dạng param để bắt trong controller -->
+            <form th:action="@{'/users/page/1'}" class="form-inline m-3">
+                <!-- Khi không khai báo gì hết thì method là Get, method = "post"-->
+                <input type="hidden" name="sortField" th:value="${sortField}" />
+                <input type="hidden" name="sortDir" th:value="${sortDir}" />
+                Filter:&nbsp;
+                <input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
+                &nbsp;&nbsp;
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+                &nbsp;&nbsp;
+                <button type="submit" class="btn btn-secondary" onclick="clearFilter()">
+                    <i class="fas fa-eraser"></i>
+                </button>
+            </form>
+
+            <div th:if="${messages !=null}" class="alert alert-success text-center">
+                [[${messages}]]
+                <!-- bắt thông báo redirectAttributes.addFlashAttribute("messages", "The user has been saved successfully");-->
+            </div>
+        </div>
+
+        <div class="full-details">
+            <table class="table table-bordered table-striped table-hover table-responsive-xl">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="hideable-column">User ID</th>
+                        <th>Photos</th>
+                        <th class="hideable-column">E-mail</th>
+                        <!-- <th>First Name</th> -->
+                        <th>
+                            <a class="text-white" th:if="${sortField != 'firstName'}"
+                                th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${sortDir}}">
+                                FirstName
+                            </a>
+                            <a class="text-white" th:if="${sortField == 'firstName'}"
+                                th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}">
+                                FirstName
+                            </a>
+                            <span th:if="${sortField == 'firstName'}"
+                                th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}">
+                            </span>
+                        </th>
+
+                        <th>Last Name</th>
+                        <th>Roles</th>
+                        <th>Enabled</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr th:each="user : ${listUsers}">
+                        <td class="hideable-column">[[${user.id}]]</td> <!--id phải đúng trong entity-->
+                        <td>
+                            <span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+                            <!-- <img th:src="@{/images/default-user.png}" width="100px" /> -->
+                            <img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"
+                                style="width: 100px" />
+
+                        </td>
+                        <td class="hideable-column">[[${user.email}]]</td>
+                        <!--email phải đúng trong entity, gọi tới method user.getEmail(getter, setter)-->
+                        <td>[[${user.firstName}]]</td>
+                        <td>[[${user.lastName}]]</td>
+                        <td>[[${user.roles}]]</td>
+                        <td>
+                            <a th:if="${user.enabled == true}" th:href="@{'/users/' + ${user.id} + '/enabled/false'}"
+                                class="fas fa-check-circle fa-2x icon-green" th:title="'Disabled this ' + 'user'"></a>
+                            <a th:if="${user.enabled == false}" th:href="@{'/users/' + ${user.id} + '/enabled/true'}"
+                                class="fas fa-circle fa-2x icon-dark" th:title="'Enabled this ' + 'user'"></a>
+                        </td>
+
+                        <td>
+                            <a th:href="@{'/users/edit/' + ${user.id}}" class="fas fa-edit fa-2x icon-green"
+                                th:title="'Edit this ' + 'user'"></a> &nbsp;&nbsp;
+                            <a th:href="@{'/users/delete/' + ${user.id}}"
+                                class="fas fa-trash fa-2x icon-dark link-delete" th:title="'Delete this ' + 'user'"
+                                th:entityId="${user.id}"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="less-details">
+            <div th:each="user:${listUsers}" class="row m-1">
+                <div class="col-4">
+                    <span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+                    <img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}" style="width: 100px" />
+                </div>
+                <div class="col-8">
+                    <div>[[${user.fullName}]]</div>
+                    <div>[[${user.roles}]]</div>
+                    <div class="mt-2">
+                        <a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
+                            th:href="@{'/users/' + ${user.id} + '/enabled/false'}"
+                            th:title="'Disable this' + 'user'"></a>
+
+                        <a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-dark"
+                            th:href="@{'/users/' + ${user.id} + '/enabled/true'}" th:title="'Enable this' + 'user'"></a>
+
+                        &nbsp;
+                        <a th:href="@{'/users/edit/' + ${user.id}}" class="fas fa-edit fa-2x icon-green"
+                            th:title="'Edit this ' + 'user'"></a> &nbsp;&nbsp;
+                        &nbsp;
+                        <a th:href="@{'/users/delete/' + ${user.id}}" class="fas fa-trash fa-2x icon-dark link-delete"
+                            th:title="'Delete this ' + 'user'" th:entityId="${user.id}"></a>
+
+                    </div>
+                    <div>&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade text-center" id="confirmModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete confirmation</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times</button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="confirmText"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-success" href="" id="yesButton">Yes</a>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="text-center m-1" th:if="${totalItems > 0}"><!--total items = 23-->
+                <span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+            </div>
+            <div class="text-center m-1" th:unless="${totalItems > 0}">
+                <span>No users found</span>
+            </div>
+            <div th:if="${totalPages > 1}"><!--Nếu tổng số trang >1 thì mới hiển thị pagination-->
+                <nav>
+                    <!--first, previous, next, last là disabled-->
+                    <!--1, 2, 3, ... là active-->
+                    <ul class="pagination justify-content-center flex-wrap">
+                        <!--flex wrap de xuong dong khi man hinh nho-->
+                        <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                            <a class="page-link"
+                                th:href="@{'users//page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a>
+                        </li>
+                        <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                            <a class="page-link"
+                                th:href="@{'/users/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+                        </li>
+                        <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+                            th:each="i : ${#numbers.sequence(1, totalPages)}">
+                            <a class="page-link"
+                                th:href="@{'/users/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                        </li>
+                        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                            <a th:href="@{'/users/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"
+                                class="page-link">Next</a>
+                        </li>
+                        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                            <a th:href="@{'/users/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"
+                                class="page-link">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="text-center m-3">
+            <p>Shopping Cart Control Panel - Copyright &copy; Shopping Cart</p>
+        </div>
+    </div>
+</body>
+
+<script th:src="@{/js/common_list.js}"></script>
+
+<script type="text/javascript">
+    moduleURL = "[[@{/users}]]";
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();//Ngăn chặn action của thẻ này, nếu ko có sẽ chạy xuống controller
+            showDeleteConfirmModal($(this), 'user');
+        });
+    });
+</script>
+
+</html>

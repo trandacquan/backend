@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:replace="fragments :: page_head(${pageTitle}, 'none')" />
+
+<body>
+    <div class="container-fluid">
+        <!-- <div>
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <a href="" class="navbar-brand" th:href="@{/}"> <img th:src="@{/images/shopping-logo.png}"
+                        width="100px" /> </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="topNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a th:href="@{/users}" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/users/new}" class="dropdown-item">Create New</a>
+                                <a th:href="@{/users}" class="dropdown-item">View All</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a th:href="@{/categories}" class="nav-link dropdown-toggle"
+                                data-toggle="dropdown">Categories</a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/categories/new}" class="dropdown-item">Create New Item</a>
+                                <a th:href="@{/categories}" class="dropdown-item">View All Item</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+        </div> -->
+
+        <div th:replace="navigation :: menu"></div>
+
+        <div>
+            <h2>Manage Users | [[${pageTitle}]]</h2>
+        </div>
+
+        <form th:action="@{/users/save}" method="post" style="max-width : 700px; margin: 0 auto" th:object="${user}"
+            enctype="multipart/form-data" onsubmit="return checkEmailUnique(this);">
+            <!-- @PostMapping("/users/save") trong user controller để gọi đến-->
+            <!-- onsubmit="return checkEmailUnique(this);" -> nếu không có dòng này thì sẽ gọi thẳng xuống controller, nếu có thì sẽ chạy hàm checkEmailUnique(this), this chính là cái thẻ chứa nó, là thẻ form này-->
+            <!-- th:action -> truyền xuống; truyền data từ trang html xuống thì dùng post; onsubmit thì sẽ check email có bị trùng không-->
+            <!-- enctype="multipart/form-data" -> de thao tac voi hinh anh, vi hinh anh la dang byte -->
+            <input type="hidden" th:field="*{id}" />
+            <!-- Giúp lưu trữ dữ liệu trong html nhưng người dùng không thayas được nhưng vẫn lưu đa ta xuống -->
+            <div class="border border-secondary rounded p-3"> <!-- p-3 là padding 3px cho cả top right left bottom -->
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">E-mail</label><!-- chia tỉ lệ 4-8 -->
+                    <div class="col-sm-8">
+                        <input type="email" class="form-control" th:field="*{email}" required minlength="8"
+                            maxlength="128" />
+                        <!-- *{email} tên thuộc tính trong entity -->
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">First Name:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:field="*{firstName}" required minlength="2"
+                            maxlength="45" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Last Name:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:field="*{lastName}" required minlength="2"
+                            maxlength="45" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Password:</label>
+                    <div class="col-sm-8">
+                        <input th:if="${user.id == null}" type="password" class="form-control" th:field="*{password}"
+                            /><!-- trường hợp này cho create -->
+                        <input th:if="${user.id != null}" type="password" class="form-control" th:field="*{password}"
+                            /><!-- trường hợp này cho .. -->
+                    </div>
+                    <!-- <div class="col-sm-8">
+                        <input th:if="${user.id == null}" type="password" class="form-control" th:field="*{password}"
+                            required minlength="2" maxlength="45" />
+                        <input th:if="${user.id != null}" type="password" class="form-control" th:field="*{password}"
+                            required minlength="2" maxlength="45" />
+                    </div> -->
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Roles:</label>
+                    <div class="col-sm-8">
+                        <th:block th:each="role:${listRoles}">
+                            <input type="checkbox" th:field="*{roles}" th:text="${role.name}" th:value="${role.id}"
+                                class="m-2"><!-- value là cái truyền xuống controler để xử lý; cái text là cái để hiển thị; m-2 là margin 2 -->
+                            - <small>[[${role.description}]]</small>
+                            <br />
+                        </th:block>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Enabled:</label>
+                    <div class="col-sm-8">
+                        <input type="checkbox" th:field="*{enabled}" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Photos:</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" th:field="*{photos}" />
+                        <!-- *{photos} photos lấy trong entity users , trong entity chỉ lưu tên hình, ko lưu hình
+                        type = hidden tức là để lưu dữ liệu tên photos và ẩn dử liệu, có các kểu type: hidden, text, ccheck box, file,
+                        file thì hiện ra 1 nút để bấm chọn hình-->
+                        <input type="file" id="fileImage" name="image" accept="image/png, image/jpeg" class="mb-2" />
+                        <img id="thumbnail" alt="photos preview" th:src="@{${user.photosImagePath}}"
+                            class="img-fluid" />
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <input type="submit" value="save" class="btn btn-primary m-3" />
+                    <input type="button" value="cancel" class="btn btn-secondary" id="buttonCancel" />
+                </div>
+
+            </div>
+
+        </form>
+        
+        <!-- Fragment cho modal dialog -->
+        <div th:replace="modal_fragments :: modalDialog"></div>
+
+        <!-- Fragment cho Footer -->
+        <div th:replace="fragments :: footer" th:remove="tag"></div>
+    </div>
+    <!-- Bấm f12 khi trong chrome để debug js ; f10 đi từng dòng, f8 đi hết để debug-->
+    <script type="text/javascript">
+        MAX_FILE_SIZE = 102400; //100KB
+
+        moduleURL = "[[@{/users}]]";
+
+        function checkEmailUnique(form) {
+
+            url = "[[@{/users/check_email}]]";
+            userEmail = $("#email").val(); //$ này là jquery
+            userId = $("#id").val();
+            csrfValue = $("input[name='_csrf']").val();//gọi ajax
+            params = { id: userId, email: userEmail, _csrf: csrfValue }; //một object, ngoạc nhọn là tạo 1 oject tạo obj để truyền xuống controler
+
+            $.post(url, params, function (response) {  //phương thức post -- W3S: Loads data from a server using an AJAX HTTP POST request
+                if (response == "OK") {
+                    form.submit();
+                } else if (response == "Duplicated") {
+                    showWarningModal("There is another user having the email " + userEmail);
+                    //alert("There is another user having the email " + userEmail);
+                } else {
+                    showErrorModal("Unknown response from server");
+                    //alert("Unknown response from server");
+                }
+            }).fail(function () {
+                showErrorModal("Could not connect to the server");
+                //alert("Could not connect to the server");
+            });
+
+            return false;
+        }
+
+    </script>
+
+    <script th:src="@{/js/common_form.js}"></script>
+
+</body>
+
+</html>

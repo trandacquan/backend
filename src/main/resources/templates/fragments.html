@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:fragment="page_head(title, remove)" th:remove="${remove}">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0" />
+  <title>[[${title}]]</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+  <!-- https://fontawesome.com/download =>nhấn download Free For Web, copy webfonts, copy css/all.css vào folder fontawesome-->
+  <!-- https://fontawesome.com/search =>search từ khóa pointrait =>chọn <i class="fa-solid fa-image-portrait"></i> -->
+  <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+  <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+
+<body>
+  <!-- File fragmens.html này phải cùng cấp với index.html 
+  Tạo 1 file .html mới xong copy các đoạn code từ file user.html vào và chỉnh sửa.
+  id/email
+  thymeleaf fragments
+  tag: xóa thẻ bên ngoài, none: giữ thẻ bên ngoài
+  -->
+
+  <!-- FRAGMENT CHO COLUMN TABLE -->
+
+  
+  <th th:fragment="column_link(fieldName, columnLabel, entityURL, removeTag)" th:remove="${removeTag}">
+    <!-- <a th:href="@{'/users/page/' + ${currentPage} + '?sortField=' +${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keywords != null ? '&keywords=' + keyword : ''}}"
+      class="text-white">
+      [[${columnLabel}]]
+    </a> -->
+    <a th:href="@{${entityURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keywords != null ? '&keywords=' + keyword : ''}}"
+      class="text-white">[[${columnLabel}]]</a>
+    <!-- <a th:href="@{'/users/page/' + ${currentPage} + '?sortField=' +${fieldName} + '&sortDir=' + ${reverseSortDir} + ${keywords != null ? '&keywords=' + keyword : ''}}"
+      class="text-white" th:if="${sortField == fieldName}">
+      [[${columnLabel}]]
+    </a> -->
+    <span th:if="${sortField == fieldName}"
+      th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+  </th>
+  <!-- FRAGMENTS CHO SEARCH -->
+  <div th:fragment="search_form_and_message()">
+    <!-- /users/page/1?sortField=firstName&sortDir=asc&keyword=bruce-->
+    <!-- ?sortField=firstName&sortDir=asc&keyword=bruce -> là dạng param , sau dấu ? -->
+    <!-- Các input bên trong form biến thành dạng param cặp keyvalue, param để bắt những tham số sau dấu ?-->
+    <!-- input method dạng get thì sẽ biến nhữn input thành những dạng param để bắt trong controller -->
+    <form th:action="@{'/users/page/1'}" class="form-inline m-3">
+      <!-- Khi không khai báo gì hết thì method là Get, method = "post"-->
+      <input type="hidden" name="sortField" th:value="${sortField}" />
+      <input type="hidden" name="sortDir" th:value="${sortDir}" />
+      Filter:&nbsp;
+      <input type="search" name="keyword" th:value="${keyword}" id="input-box-clear" class="form-control" required />
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i>
+      </button>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-secondary" onclick="clearFilter()">
+        <i class="fas fa-eraser"></i>
+      </button>
+    </form>
+
+    <div th:if="${messages !=null}" class="alert alert-success text-center">
+      [[${messages}]]
+      <!-- bắt thông báo redirectAttributes.addFlashAttribute("messages", "The user has been saved successfully");-->
+    </div>
+  </div>
+  <!-- FRAGMENT CHO PHOTOS -->
+  <div th:fragment="user_photos" th:remove="tag">
+    <span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+    <img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}" style="width: 100px" />
+  </div>
+  <div th:fragment="photos(Photos, PhotoPath)" th:remove="tag">
+    <span th:if="${Photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+    <img th:if="${Photos != null}" th:src="@{${PhotoPath}}" style="width: 100px" />
+  </div>
+
+  <!-- FRAGMENT CHO STATUS -->
+  <div th:fragment="status(enabled, entityName, entityURL)" th:remove="tag">
+    <a th:if="${enabled == true}" th:href="@{${entityURL} + '/enabled/false'}"
+      class="fas fa-check-circle fa-2x icon-green" th:title="'Disabled this ' + ${entityName}"></a>
+    <a th:if="${enabled == false}" th:href="@{${entityURL} + '/enabled/true'}" class="fas fa-circle fa-2x icon-dark"
+      th:title="'Enabled this ' + ${entityName}"></a>
+  </div>
+
+
+  <div th:fragment="edit(entityName, editURL)" th:remove="tag">
+    <a th:href="@{${editURL}}" class="fas fa-edit fa-2x icon-green" th:title="'Edit this ' + ${entityName}"></a>
+  </div>
+
+  <div th:fragment="delete(entityName, entityId, deleteURL, visible)" th:remove="tag">
+    <th:block th:if="${visible}">
+      <a th:href="@{${deleteURL}}" class="fas fa-trash fa-2x icon-dark link-delete"
+        th:title="'Delete this ' + ${entityName}" th:entityId="${entityId}"></a>
+    </th:block>
+  </div>
+
+  <!-- fragment cho pagination -->
+  <div th:fragment="pagination(moduleURL, entityName)" th:remove="tag">
+    <div class="text-center m-1" th:if="${totalItems > 0}"><!--total items = 23-->
+      <span>Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+    </div>
+    <div class="text-center m-1" th:unless="${totalItems > 0}">
+      <span>No [[${entityName}]] found</span>
+    </div>
+    <div th:if="${totalPages > 1}"><!--Nếu tổng số trang >1 thì mới hiển thị pagination-->
+      <nav>
+        <!--first, previous, next, last là disabled-->
+        <!--1, 2, 3, ... là active-->
+        <ul class="pagination justify-content-center flex-wrap">
+          <!--flex wrap de xuong dong khi man hinh nho-->
+          <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+            <!-- <a class="page-link"
+              th:href="@{'/' + ${entityName} + '/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a> -->
+            <a th:replace="fragments :: page_link('/' + ${entityName}, 1, 'First')"></a>
+          </li>
+          <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+            <!-- <a class="page-link"
+              th:href="@{'/' + ${entityName} + '/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a> -->
+            <a th:replace="fragments :: page_link('/' + ${entityName}, ${currentPage - 1}, 'Previous')"></a>
+          </li>
+          <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+            th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <!-- <a class="page-link"
+              th:href="@{'/' + ${entityName} + '/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a> -->
+            <a th:replace="fragments :: page_link('/' + ${entityName}, ${i}, ${i})"></a>
+          </li>
+          <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+            <!-- <a th:href="@{'/' + ${entityName} + '/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"
+              class="page-link">Next</a> -->
+            <a th:replace="fragments :: page_link('/' + ${entityName}, ${currentPage + 1}, 'Next')"></a>
+          </li>
+          <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+            <!-- <a th:href="@{'/' + ${entityName} + '/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"
+              class="page-link">Last</a> -->
+            <a th:replace="fragments :: page_link('/' + ${entityName}, ${totalPages}, 'Last')"></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <a th:fragment="page_link(moduleURL, pageNum, label)" class="page-link" th:href="@{${moduleURL} + '/page/' + ${pageNum} + '?sortField=' + ${sortField} +
+  '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${label}]]</a>
+
+  <!-- fragment cho footer -->
+  <div th:fragment="footer" th:remove="tag">
+    <div class="text-center m-3">
+      <p>Shopping Cart Control Panel - Copyright &copy; Shopping Cart</p>
+    </div>
+  </div>
+
+</body>
+
+</html>

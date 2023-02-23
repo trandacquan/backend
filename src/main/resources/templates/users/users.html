@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:replace="fragments :: page_head('Users - Shopping Cart Admin', 'none')" />
+
+<body>
+    <div class="container-fluid">
+
+        <div th:replace="navigation :: menu"></div>
+
+        <div>
+            <h2>Manage Users</h2>
+            <a th:href="@{/users/new}" class="fas fa-user-plus fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/excel}" class="fas fa-file-excel fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/users/export/pdf}" class="fas fa-file-pdf fa-2x icon-dark mr-2"></a>
+        </div>
+
+        <div th:replace="fragments :: search_form_and_message" />
+
+        <div class="full-details">
+            <table class="table table-bordered table-striped table-hover table-responsive-xl">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="hideable-column">
+                        <th th:replace="fragments :: column_link('id', 'User ID', '/users', 'tag')"></th>
+                        </th>
+                        <th>Photos</th>
+                        <th class="hideable-column">
+                        <th th:replace="fragments :: column_link('email', 'E-mail', '/users', 'tag')"></th>
+                        </th>
+                        <th th:replace="fragments :: column_link('firstName', 'First Name', '/users', 'none')"></th>
+                        <th th:replace="fragments :: column_link('lastName', 'Last Name', '/users', 'none')"></th>
+                        <th>Roles</th>
+                        <th th:replace="fragments :: column_link('enabled', 'Enabled', '/users', 'none')"></th>
+                        <!-- <th>First Name</th> -->
+                        <!-- <th>
+                            <a class="text-white" th:if="${sortField != 'firstName'}"
+                                th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${sortDir}}">
+                                FirstName
+                            </a>
+                            <a class="text-white" th:if="${sortField == 'firstName'}"
+                                th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}">
+                                FirstName
+                            </a>
+                            <span th:if="${sortField == 'firstName'}"
+                                th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}">
+                            </span>
+                        </th> -->
+
+                        <!-- <th>Last Name</th>
+                        <th>Roles</th>
+                        <th>Enabled</th> -->
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr th:each="user : ${listUsers}">
+                        <td class="hideable-column">[[${user.id}]]</td> <!--id phải đúng trong entity-->
+                        <td>
+                            <div th:replace="fragments :: user_photos"></div>
+                        </td>
+                        <td class="hideable-column">[[${user.email}]]</td>
+                        <!--email phải đúng trong entity, gọi tới method user.getEmail(getter, setter)-->
+                        <td>[[${user.firstName}]]</td>
+                        <td>[[${user.lastName}]]</td>
+                        <td>[[${user.roles}]]</td>
+                        <td>
+                            <div th:replace="fragments :: status(${user.enabled}, 'user', '/users/' + ${user.id})">
+                            </div>
+                        </td>
+
+                        <td>
+                            <div th:replace="fragments :: edit('user', '/users/edit/' + ${user.id})"></div>
+                            &nbsp;&nbsp;
+                            <div th:replace="fragments :: delete('user', ${user.id}, '/users/delete/' + ${user.id}, true)">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="less-details">
+            <div th:each="user:${listUsers}" class="row m-1">
+                <div class="col-4">
+                    <div th:replace="fragments :: user_photos"></div>
+                </div>
+                <div class="col-8">
+                    <div>[[${user.fullName}]]</div>
+
+                    <div>[[${user.roles}]]</div>
+
+                    <div class="mt-2">
+                        <div th:replace="fragments :: status(${user.enabled}, 'user', '/users/' + ${user.id})"></div>
+                        &nbsp;
+                        <div th:replace="fragments :: edit('user', '/users/edit/' + ${user.id})"></div>
+                        &nbsp;
+                        <div th:replace="fragments :: delete('user', ${user.id}, '/users/delete/' + ${user.id}, true)"></div>
+                    </div>
+                    <div>&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fragment cho modal - confirmModal -->
+        <div th:replace="modal_fragments :: confirmModal"></div>
+
+        <!-- Fragment cho pagination -> Để tham khảo code cũ, xem bên users copy -->
+        <!-- <div th:replace="fragments :: pagination('users')"></div> -->
+        <div th:replace="fragments :: pagination('/users','users')"></div>
+
+        <!-- Fragment cho Footer -->
+        <div th:replace="fragments :: footer" th:remove="tag"></div>
+    </div>
+</body>
+
+<script th:src="@{/js/common_list.js}"></script>
+
+<script type="text/javascript">
+
+    moduleURL = "[[@{/users}]]";
+    
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();//Ngăn chặn action của thẻ này, nếu ko có sẽ chạy xuống controller
+            showDeleteConfirmModal($(this), 'user');
+        });
+    });
+
+    function clearFilter() {
+        document.getElementById("input-box-clear").value = "";
+        window.location = moduleURL;
+    }
+
+</script>
+
+</html>

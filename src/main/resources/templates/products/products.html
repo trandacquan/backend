@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:replace="fragments :: page_head('Categories - Shopping Cart Admin', 'none')" />
+
+<body>
+    <div class="container-fluid">
+        <div th:replace="navigation :: menu"></div>
+
+        <div>
+            <h2>Manage Products</h2>
+            <a th:href="@{/products/new}" class="fas fa-user-plus fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/products/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/products/export/excel}" class="fas fa-file-excel fa-2x icon-dark mr-2"></a>
+            <a th:href="@{/products/export/pdf}" class="fas fa-file-pdf fa-2x icon-dark mr-2"></a>
+        </div>
+
+        <div th:replace="fragments :: search_form_and_message" />
+
+        <div th:if="${messages !=null}" class="alert alert-success text-center">
+            [[${messages}]]
+        </div>
+
+        <div class="full-details">
+            <table class="table table-bordered table-striped table-hover table-responsive-xl">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="hideable-column">ID</th>
+
+                        <th>Main Image</th>
+
+                        <th>Product Name</th>
+
+                        <th class="hideable-column">Brand</th>
+
+                        <th>Category</th>
+
+                        <th>
+                            <th th:replace="fragments :: column_link('enabled','Enabled','/products','tag')" />
+                        </th>
+
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="product : ${listProducts}">
+                        <td class="hideable-column">[[${product.id}]]</td>
+
+                        <td>
+                            <th th:replace="fragments :: photos(${product.mainImage}, ${product.imagePath})" />
+                        </td>
+
+                        <td class="hideable-column">[[${product.name}]]</td>
+
+                        <td>[[${product.brand}]]</td>
+
+                        <td>[[${product.category}]]</td>
+
+                        <td>
+                            <th th:replace="fragments :: status(${product.enabled}, 'product', '/products/' + ${product.id})"></th>
+                        </td>
+
+                        <td>
+                            <div th:replace="fragments :: edit('product', '/products/edit/' + ${product.id})"></div>
+                            &nbsp;&nbsp;
+
+                            <div th:replace="fragments :: delete('product', ${product.id}, '/products/delete/' + ${product.id}, true)"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="less-details">
+            <div class="row  mt-2" th:each="product : ${listproducts}">
+                <div class="col-4 ">
+                    <div th:replace="fragments :: photos(${product.mainImage},${product.imagePath})" />
+
+                </div>
+                <div class="col-8">
+                    <div>[[${product.name}]]</div>
+
+                    <div>[[${product.brand}]]</div>
+
+                    <div>[[${product.category}]]</div>
+
+                    <div class="mt-2">
+                        <div th:replace="fragments :: status(${product.enabled},'product','/products/' + ${product.id})"></div>
+                        &nbsp;
+
+                        <div th:replace="fragments :: edit('product', '/products/edit/' + ${product.id})"></div>
+                        &nbsp;&nbsp;
+
+                        <div th:replace="fragments :: delete('product',${product.id},'/products/delete/' + ${product.id},true)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="modal_fragments :: confirmModal" />
+
+        <div th:replace="fragments :: pagination('/products','product')" />
+
+        <div th:replace="fragments :: footer" />
+    </div>
+</body>
+
+<script th:src="@{/js/common_list.js}"></script>
+
+<script type="text/javascript">
+    MAX_FILE_SIZE = 102400;
+    moduleURL2 = "[[@{/products}]]";
+
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            showDeleteConfirmModal($(this), 'product');
+        });
+    });
+
+    //clearFilter()
+    function clearFilter() {
+        document.getElementById("input-box-clear").value = "";
+        window.location = moduleURL2;
+    }
+</script>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:replace="fragments :: page_head(${pageTitle}, 'none')" />
+
+<body>
+    <div class="container-fluid">
+        <!-- Fragment cho Navigation -->
+        <div th:replace="navigation :: menu"></div>
+
+        <div>
+            <h2>Manage Categories | [[${pageTitle}]]</h2>
+        </div>
+
+        <!-- MỘT SỐ GHI CHÚ CHO THẺ FORM BÊN DƯỚI:======================================================================
+        1/ @PostMapping("/categories/save") -> Đổ về category controller.
+        2/ onsubmit="return checkNameUnique(this);" -> nếu không có dòng này thì sẽ gọi thẳng xuống controller,
+        nếu có thì sẽ chạy hàm checkNameUnique(this),
+            this chính là cái thẻ chứa nó, là chính thẻ form này.
+        3/ th:action = "@{/categories/save}" -> truyền dữ liệu xuống; truyền data từ trang html xuống thì dùng post.
+        4/ enctype="multipart/form-data" -> de thao tac voi hinh anh, vi hinh anh la dang byte
+        5/ type = "hidden" Giúp lưu trữ dữ liệu trong html nhưng người dùng không thấy được nhưng vẫn lưu data xuống.
+            PHẦN categories name:---------------------------------------------------------------------------------------
+        6/ p-3 là padding 3px cho cả top right left bottom, col-sm-4 và col-sm-8 -> chia tỉ lệ 4-8
+        7/ th:field="*{productName}" truyền giá trị nhập trong form field vào Tên thuộc tính trong category entity
+            PHẦN IMAGE:-------------------------------------------------------------------------------------------------
+        8/ *{photos} photos lấy trong entity categories , trong entity chỉ lưu tên hình (Đường dẫn), ko lưu hình
+        9/ type = hidden tức là để lưu dữ liệu tên photos và ẩn dử liệu, có các kểu type: hidden, text, check box, file,
+        10/type = file thì hiện ra 1 nút để bấm chọn hình ảnh để lưu. 
+        ================================================================================================================-->
+        <form th:action="@{/categories/save}" method="post" style="max-width : 700px; margin: 0 auto"
+            th:object="${categories}" enctype="multipart/form-data" onsubmit="return checkUnique(this);">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="border border-secondary rounded p-3">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Category Name:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:field="*{productName}" required minlength="2"
+                            maxlength="45" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Alias:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:field="*{alias}" required minlength="2"
+                            maxlength="45" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Parent Category</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" th:field="*{parent}">
+                            <option value="0">[No Parent]</option>
+                            <th:block th:each="cat : ${listCategories}">
+                                <option th:value="${cat.id}">[[${cat.productName}]]</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Image:</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" th:field="*{photos}" />
+                        <input type="file" id="fileImage" name="image" accept="image/png, image/jpg" class="mb-2" />
+                        <img id="thumbnail" alt="photos preview" th:src="@{${categories.photosImagePath}}"
+                            class="img-fluid" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Enabled:</label>
+                    <div class="col-sm-8">
+                        <input type="checkbox" th:field="*{enabled}" />
+                    </div>
+                </div>
+
+                <div class="text-center m-3">
+                    <input type="submit" value="save" class="btn btn-primary m-3" />
+                    <input type="button" value="cancel" class="btn btn-secondary" id="buttonCancel" />
+                </div>
+            </div>
+        </form>
+
+        <!-- FRAGMENT - MODAL DIALOG -> Thiếu sẽ không hiển thị modal được-->
+        <div th:replace="modal_fragments :: modalDialog"></div>
+
+        <!-- Fragment cho Footer -->
+        <div th:replace="fragments :: footer"></div>
+    </div>
+
+    <!--LƯU Ý KHI DEBUG TRONG CHROME/ BROWSER
+    Bấm F12 khi trong chrome để debug js ;
+    F10 đi từng dòng,
+    F8 đi hết để debug -->
+    <script type="text/javascript">
+        // đặt đường dẫn trang /category vào moduleURL để gọi trong /js/common_form.js khi bấm id=buttonCancel
+        //moduleURL = "[[@{/categories}]]";
+
+        // function checkNameUnique(form) {
+        //     url = "[[@{/categories/check_name}]]";
+        //     categoryName = $("#productName").val();//#productName -> th:field="*{productName}"
+        //     categoryId = $("#id").val();//#id -> th:field="*{id}
+        //     csrfValue = $("input[name='_csrf']").val();//gọi jquery ajax
+        //     params = { id: categoryId, name: categoryName, _csrf: csrfValue };
+
+        //     $.post(url, params, function (response) {//$.post(URL,data,callback) -> jQuery $.post() Method
+        //         if (response == "OK") {
+        //             form.submit();
+        //         } else if (response == "Duplicated") {
+        //             showWarningModal("There is another category having the name " + categoryName);
+        //         } else {
+        //             showErrorModal("Unknown response from server");
+        //         }
+        //     }).fail(function () {
+        //         showErrorModal("Unknown response from server");
+        //     });
+        //     return false;
+        // }
+
+        function checkUnique(form) {
+            catId = $("#id").val();
+            catName = $("#productName").val();
+            catAlias = $("#alias").val();
+
+            csrfValue = $("input[name='_csrf']").val();//gọi jquery ajax
+
+            url = "[[@{/categories/check_unique}]]";
+
+            params = { id: catId, name: catName, alias: catAlias, _csrf: csrfValue };
+
+            $.post(url, params, function (response) {//$.post(URL,data,callback) -> Ajax jQuery $.post() Method
+                //Là 1 cách để gọi xuống controller
+                if (response == "OK") {
+                    form.submit();
+                } else if (response == "DuplicateName") {
+                    showWarningModal("There is another category having same name " + catName);
+                } else if (response == "DuplicateAlias") {
+                    showWarningModal("There is another category having same alias " + catAlias);
+                } else {
+                    showErrorModal("Unknown response from server");
+                }
+            }).fail(function () {
+                showErrorModal("Unknown response from server");
+            });
+            return false;
+
+
+        }
+
+    </script>
+
+    <script th:src="@{/js/common_form.js}"></script>
+</body>
+
+</html>

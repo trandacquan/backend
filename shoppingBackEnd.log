@@ -1,0 +1,37 @@
+2023-02-07 20:38:57.067  INFO 12524 --- [restartedMain] c.shoppingcart.admin.BackendApplication  : Starting BackendApplication using Java 18.0.2 on QuanSPredator with PID 12524 (D:\06 SoftWare\19 Maven\backend\target\classes started by Admin in D:\06 SoftWare\19 Maven\backend)
+2023-02-07 20:38:57.070 DEBUG 12524 --- [restartedMain] c.shoppingcart.admin.BackendApplication  : Running with Spring Boot v2.4.1, Spring v5.3.2
+2023-02-07 20:38:57.071  INFO 12524 --- [restartedMain] c.shoppingcart.admin.BackendApplication  : No active profile set, falling back to default profiles: default
+2023-02-07 20:38:57.189  INFO 12524 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2023-02-07 20:38:57.299  INFO 12524 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2023-02-07 20:38:58.116  INFO 12524 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-02-07 20:38:58.243  INFO 12524 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 107 ms. Found 3 JPA repository interfaces.
+2023-02-07 20:38:59.636  INFO 12524 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8082 (http)
+2023-02-07 20:38:59.655  INFO 12524 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-02-07 20:38:59.656  INFO 12524 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.41]
+2023-02-07 20:38:59.791  INFO 12524 --- [restartedMain] o.a.c.c.C.[.[.[/ShoppingCartAdmin]       : Initializing Spring embedded WebApplicationContext
+2023-02-07 20:38:59.792  INFO 12524 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2492 ms
+2023-02-07 20:39:00.138  INFO 12524 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-02-07 20:39:00.229  INFO 12524 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.25.Final
+2023-02-07 20:39:00.466  INFO 12524 --- [restartedMain] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-02-07 20:39:00.625  INFO 12524 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-02-07 20:39:00.850  INFO 12524 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-02-07 20:39:00.878  INFO 12524 --- [restartedMain] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-02-07 20:39:01.962  INFO 12524 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-02-07 20:39:01.974  INFO 12524 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-02-07 20:39:01.998  INFO 12524 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2023-02-07 20:39:02.751  WARN 12524 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-02-07 20:39:03.058  INFO 12524 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/images/**'] with []
+2023-02-07 20:39:03.059  INFO 12524 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/js/**'] with []
+2023-02-07 20:39:03.059  INFO 12524 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/webjars/**'] with []
+2023-02-07 20:39:03.125  INFO 12524 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@23a4710c, org.springframework.security.web.context.SecurityContextPersistenceFilter@69d72fdc, org.springframework.security.web.header.HeaderWriterFilter@23fb612d, org.springframework.security.web.csrf.CsrfFilter@300419f9, org.springframework.security.web.authentication.logout.LogoutFilter@5d7e0ce, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@47f1dd83, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@18ebcad8, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@684403fd, org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter@25432f85, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@29211e3a, org.springframework.security.web.session.SessionManagementFilter@67801001, org.springframework.security.web.access.ExceptionTranslationFilter@895bd4b, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5882a8dd]
+2023-02-07 20:39:03.309  INFO 12524 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2023-02-07 20:39:03.436  INFO 12524 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2023-02-07 20:39:04.323  INFO 12524 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8082 (http) with context path '/ShoppingCartAdmin'
+2023-02-07 20:39:04.337  INFO 12524 --- [restartedMain] c.shoppingcart.admin.BackendApplication  : Started BackendApplication in 7.891 seconds (JVM running for 8.554)
+2023-02-07 20:40:29.443  INFO 12524 --- [http-nio-8082-exec-1] o.a.c.c.C.[.[.[/ShoppingCartAdmin]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-02-07 20:40:29.444  INFO 12524 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2023-02-07 20:40:29.907  INFO 12524 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2023-02-07 21:01:08.071  INFO 12524 --- [Thread-4] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2023-02-07 21:01:08.074  INFO 12524 --- [Thread-4] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-02-07 21:01:08.081  INFO 12524 --- [Thread-4] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-02-07 21:01:08.092  INFO 12524 --- [Thread-4] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
