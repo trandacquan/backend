@@ -105,6 +105,7 @@ public class ProductController {
 		}
 		redirectAttributes.addFlashAttribute("messages", "The product has been saved successfully");
 		return "redirect:/products";//thu github
+		//thu totogit
 	}
 
 }
